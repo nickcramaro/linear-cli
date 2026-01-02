@@ -4,13 +4,32 @@ A fast, native CLI for [Linear](https://linear.app) built in Rust.
 
 ## Installation
 
+### Quick Install (recommended)
+
 ```bash
-# Clone and build
+# macOS (Apple Silicon)
+curl -fsSL https://github.com/nickcramaro/linear-cli/releases/latest/download/linear-macos-aarch64 -o linear
+chmod +x linear && sudo mv linear /usr/local/bin/
+
+# macOS (Intel)
+curl -fsSL https://github.com/nickcramaro/linear-cli/releases/latest/download/linear-macos-x86_64 -o linear
+chmod +x linear && sudo mv linear /usr/local/bin/
+
+# Linux (x86_64)
+curl -fsSL https://github.com/nickcramaro/linear-cli/releases/latest/download/linear-linux-x86_64 -o linear
+chmod +x linear && sudo mv linear /usr/local/bin/
+
+# Linux (ARM64)
+curl -fsSL https://github.com/nickcramaro/linear-cli/releases/latest/download/linear-linux-aarch64 -o linear
+chmod +x linear && sudo mv linear /usr/local/bin/
+```
+
+### Build from Source
+
+```bash
 git clone https://github.com/nickcramaro/linear-cli.git
 cd linear-cli
 cargo build --release
-
-# Add to PATH (optional)
 cp target/release/linear /usr/local/bin/
 ```
 
