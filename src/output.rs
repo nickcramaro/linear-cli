@@ -1,5 +1,6 @@
 use crate::commands::cycle::{Cycle, CycleDetail};
 use crate::commands::issue::{Issue, IssueDetail};
+use crate::commands::label::Label;
 use crate::commands::project::{Project, ProjectDetail};
 use crate::commands::team::Team;
 use owo_colors::{OwoColorize, Stream, Style};
@@ -305,5 +306,20 @@ pub fn print_cycle_detail(cycle: &CycleDetail) {
             println!();
             println!("{}", desc);
         }
+    }
+}
+
+pub fn print_labels(labels: &[Label]) {
+    if labels.is_empty() {
+        println!("No labels found.");
+        return;
+    }
+
+    for label in labels {
+        println!(
+            "{} {}",
+            "\u{25cf}".if_supports_color(Stream::Stdout, |s| s.style(Style::new())),
+            label.name
+        );
     }
 }

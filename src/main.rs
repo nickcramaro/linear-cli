@@ -84,6 +84,11 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::cycle::handle_get(&client, &args).await?;
             }
         },
+        Commands::Label { command } => match command {
+            commands::label::LabelCommands::List(args) => {
+                commands::label::handle_list(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())

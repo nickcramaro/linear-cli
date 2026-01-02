@@ -1,5 +1,6 @@
 pub mod cycle;
 pub mod issue;
+pub mod label;
 pub mod project;
 pub mod team;
 pub mod user;
@@ -32,5 +33,10 @@ pub enum Commands {
     Cycle {
         #[command(subcommand)]
         command: cycle::CycleCommands,
+    },
+    /// Label operations
+    Label {
+        #[command(subcommand)]
+        command: label::LabelCommands,
     },
 }
