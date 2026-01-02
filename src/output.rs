@@ -1,6 +1,6 @@
+use crate::commands::issue::{Issue, IssueDetail};
 use owo_colors::{OwoColorize, Stream, Style};
 use tabled::{Table, Tabled};
-use crate::commands::issue::{Issue, IssueDetail};
 
 pub fn print_user(name: &str, email: &str, id: &str) {
     println!(
@@ -51,15 +51,24 @@ pub fn print_issues(issues: &[Issue]) {
         return;
     }
 
-    let rows: Vec<IssueRow> = issues.iter().map(|issue| {
-        IssueRow {
+    let rows: Vec<IssueRow> = issues
+        .iter()
+        .map(|issue| IssueRow {
             id: issue.identifier.clone(),
             title: truncate(&issue.title, 40),
-            state: issue.state.as_ref().map(|s| s.name.clone()).unwrap_or_else(|| "-".to_string()),
-            assignee: issue.assignee.as_ref().map(|a| a.name.clone()).unwrap_or_else(|| "-".to_string()),
+            state: issue
+                .state
+                .as_ref()
+                .map(|s| s.name.clone())
+                .unwrap_or_else(|| "-".to_string()),
+            assignee: issue
+                .assignee
+                .as_ref()
+                .map(|a| a.name.clone())
+                .unwrap_or_else(|| "-".to_string()),
             priority: priority_label(issue.priority),
-        }
-    }).collect();
+        })
+        .collect();
 
     let table = Table::new(rows).to_string();
     println!("{}", table);
@@ -68,7 +77,10 @@ pub fn print_issues(issues: &[Issue]) {
 fn truncate(s: &str, max: usize) -> String {
     let chars: Vec<char> = s.chars().collect();
     if chars.len() > max {
-        format!("{}…", chars[..max.saturating_sub(1)].iter().collect::<String>())
+        format!(
+            "{}…",
+            chars[..max.saturating_sub(1)].iter().collect::<String>()
+        )
     } else {
         s.to_string()
     }
@@ -88,28 +100,60 @@ fn priority_label(p: i32) -> String {
 pub fn print_issue_detail(issue: &IssueDetail) {
     let id_style = Style::new().cyan().bold();
     let title_style = Style::new().bold();
-    println!("{} {}",
-        issue.identifier.if_supports_color(Stream::Stdout, |s| s.style(id_style)),
-        issue.title.if_supports_color(Stream::Stdout, |s| s.style(title_style)));
+    println!(
+        "{} {}",
+        issue
+            .identifier
+            .if_supports_color(Stream::Stdout, |s| s.style(id_style)),
+        issue
+            .title
+            .if_supports_color(Stream::Stdout, |s| s.style(title_style))
+    );
     println!();
 
-    println!("{}: {}", "Team".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        format!("{} ({})", issue.team.name, issue.team.key));
-    println!("{}: {}", "State".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        issue.state.as_ref().map(|s| s.name.as_str()).unwrap_or("—"));
-    println!("{}: {}", "Assignee".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        issue.assignee.as_ref().map(|a| a.name.as_str()).unwrap_or("—"));
-    println!("{}: {}", "Priority".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        priority_label(issue.priority));
-    println!("{}: {}", "Created".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        &issue.created_at[..10]);
-    println!("{}: {}", "Updated".if_supports_color(Stream::Stdout, |s| s.dimmed()),
-        &issue.updated_at[..10]);
+    println!(
+        "{}: {} ({})",
+        "Team".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        issue.team.name,
+        issue.team.key
+    );
+    println!(
+        "{}: {}",
+        "State".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        issue.state.as_ref().map(|s| s.name.as_str()).unwrap_or("—")
+    );
+    println!(
+        "{}: {}",
+        "Assignee".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        issue
+            .assignee
+            .as_ref()
+            .map(|a| a.name.as_str())
+            .unwrap_or("—")
+    );
+    println!(
+        "{}: {}",
+        "Priority".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        priority_label(issue.priority)
+    );
+    println!(
+        "{}: {}",
+        "Created".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &issue.created_at[..10]
+    );
+    println!(
+        "{}: {}",
+        "Updated".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &issue.updated_at[..10]
+    );
 
     if let Some(desc) = &issue.description {
         if !desc.is_empty() {
             println!();
-            println!("{}", "Description:".if_supports_color(Stream::Stdout, |s| s.dimmed()));
+            println!(
+                "{}",
+                "Description:".if_supports_color(Stream::Stdout, |s| s.dimmed())
+            );
             println!("{}", desc);
         }
     }

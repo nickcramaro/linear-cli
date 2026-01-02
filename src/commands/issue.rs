@@ -1,8 +1,8 @@
-use clap::{Args, Subcommand};
-use serde::Deserialize;
 use crate::client::LinearClient;
 use crate::error::Result;
 use crate::output;
+use clap::{Args, Subcommand};
+use serde::Deserialize;
 
 #[derive(Subcommand)]
 pub enum IssueCommands {
@@ -267,7 +267,9 @@ pub async fn handle_create(client: &LinearClient, args: &CreateArgs) -> Result<(
             println!("{}", issue.url);
         }
     } else {
-        return Err(crate::error::Error::GraphQL("Failed to create issue".to_string()));
+        return Err(crate::error::Error::GraphQL(
+            "Failed to create issue".to_string(),
+        ));
     }
 
     Ok(())
@@ -300,11 +302,19 @@ pub async fn handle_update(client: &LinearClient, args: &UpdateArgs) -> Result<(
 
     if response.issue_update.success {
         if let Some(issue) = response.issue_update.issue {
-            let state_name = issue.state.map(|s| s.name).unwrap_or_else(|| "—".to_string());
-            println!("Updated {} - {} [{}]", issue.identifier, issue.title, state_name);
+            let state_name = issue
+                .state
+                .map(|s| s.name)
+                .unwrap_or_else(|| "—".to_string());
+            println!(
+                "Updated {} - {} [{}]",
+                issue.identifier, issue.title, state_name
+            );
         }
     } else {
-        return Err(crate::error::Error::GraphQL("Failed to update issue".to_string()));
+        return Err(crate::error::Error::GraphQL(
+            "Failed to update issue".to_string(),
+        ));
     }
 
     Ok(())
@@ -314,16 +324,28 @@ fn build_filter(args: &ListArgs) -> serde_json::Value {
     let mut filter = serde_json::Map::new();
 
     if let Some(team) = &args.team {
-        filter.insert("team".to_string(), serde_json::json!({ "key": { "eq": team } }));
+        filter.insert(
+            "team".to_string(),
+            serde_json::json!({ "key": { "eq": team } }),
+        );
     }
     if let Some(state) = &args.state {
-        filter.insert("state".to_string(), serde_json::json!({ "name": { "eq": state } }));
+        filter.insert(
+            "state".to_string(),
+            serde_json::json!({ "name": { "eq": state } }),
+        );
     }
     if let Some(assignee) = &args.assignee {
         if assignee == "me" {
-            filter.insert("assignee".to_string(), serde_json::json!({ "isMe": { "eq": true } }));
+            filter.insert(
+                "assignee".to_string(),
+                serde_json::json!({ "isMe": { "eq": true } }),
+            );
         } else {
-            filter.insert("assignee".to_string(), serde_json::json!({ "name": { "contains": assignee } }));
+            filter.insert(
+                "assignee".to_string(),
+                serde_json::json!({ "name": { "contains": assignee } }),
+            );
         }
     }
 

@@ -56,7 +56,7 @@ async fn run(cli: Cli) -> error::Result<()> {
             commands::issue::IssueCommands::Update(args) => {
                 commands::issue::handle_update(&client, &args).await?;
             }
-        }
+        },
     }
 
     Ok(())
