@@ -66,8 +66,9 @@ pub fn print_issues(issues: &[Issue]) {
 }
 
 fn truncate(s: &str, max: usize) -> String {
-    if s.len() > max {
-        format!("{}...", &s[..max-1])
+    let chars: Vec<char> = s.chars().collect();
+    if chars.len() > max {
+        format!("{}…", chars[..max.saturating_sub(1)].iter().collect::<String>())
     } else {
         s.to_string()
     }
@@ -75,10 +76,11 @@ fn truncate(s: &str, max: usize) -> String {
 
 fn priority_label(p: i32) -> String {
     match p {
+        0 => "None".to_string(),
         1 => "Urgent".to_string(),
         2 => "High".to_string(),
         3 => "Normal".to_string(),
         4 => "Low".to_string(),
-        _ => "-".to_string(),
+        _ => "—".to_string(),
     }
 }
