@@ -4,6 +4,7 @@ use crate::commands::document::{Document, DocumentDetail};
 use crate::commands::issue::{Issue, IssueDetail};
 use crate::commands::label::Label;
 use crate::commands::project::{Project, ProjectDetail};
+use crate::commands::search::SearchResult;
 use crate::commands::team::Team;
 use crate::commands::workflow::WorkflowState;
 use owo_colors::{OwoColorize, Stream, Style};
@@ -415,5 +416,29 @@ pub fn print_document_detail(doc: &DocumentDetail) {
             println!();
             println!("{}", content);
         }
+    }
+}
+
+pub fn print_search_results(results: &[SearchResult]) {
+    if results.is_empty() {
+        println!("No results found.");
+        return;
+    }
+
+    let id_style = Style::new().cyan().bold();
+    for result in results {
+        let state = result
+            .state
+            .as_ref()
+            .map(|s| s.name.as_str())
+            .unwrap_or("—");
+        println!(
+            "{} {} [{}]",
+            result
+                .identifier
+                .if_supports_color(Stream::Stdout, |s| s.style(id_style)),
+            result.title,
+            state
+        );
     }
 }

@@ -113,6 +113,9 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::document::handle_create(&client, &args).await?;
             }
         },
+        Commands::Search(args) => {
+            commands::search::handle_search(&client, &args).await?;
+        }
     }
 
     Ok(())

@@ -4,6 +4,7 @@ pub mod document;
 pub mod issue;
 pub mod label;
 pub mod project;
+pub mod search;
 pub mod team;
 pub mod user;
 pub mod workflow;
@@ -57,4 +58,6 @@ pub enum Commands {
         #[command(subcommand)]
         command: document::DocumentCommands,
     },
+    /// Search issues
+    Search(search::SearchArgs),
 }
