@@ -76,6 +76,14 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::project::handle_create(&client, &args).await?;
             }
         },
+        Commands::Cycle { command } => match command {
+            commands::cycle::CycleCommands::List(args) => {
+                commands::cycle::handle_list(&client, &args).await?;
+            }
+            commands::cycle::CycleCommands::Get(args) => {
+                commands::cycle::handle_get(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())

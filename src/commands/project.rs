@@ -58,6 +58,7 @@ struct ProjectsConnection {
 }
 
 #[derive(Deserialize, Clone)]
+#[allow(dead_code)]
 pub struct Project {
     pub id: String,
     pub name: String,
@@ -75,6 +76,7 @@ struct ProjectResponse {
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct ProjectDetail {
     pub id: String,
     pub name: String,
@@ -100,6 +102,7 @@ struct ProjectCreatePayload {
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 struct CreatedProject {
     id: String,
     name: String,

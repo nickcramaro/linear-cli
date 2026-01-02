@@ -1,3 +1,4 @@
+use crate::commands::cycle::{Cycle, CycleDetail};
 use crate::commands::issue::{Issue, IssueDetail};
 use crate::commands::project::{Project, ProjectDetail};
 use crate::commands::team::Team;
@@ -207,9 +208,7 @@ pub fn print_projects(projects: &[Project]) {
         let progress = format!("{:.0}%", project.progress * 100.0);
         println!(
             "{} [{}] {}",
-            project
-                .name
-                .if_supports_color(Stream::Stdout, |s| s.bold()),
+            project.name.if_supports_color(Stream::Stdout, |s| s.bold()),
             project.state,
             progress.if_supports_color(Stream::Stdout, |s| s.dimmed())
         );
@@ -219,9 +218,7 @@ pub fn print_projects(projects: &[Project]) {
 pub fn print_project_detail(project: &ProjectDetail) {
     println!(
         "{}",
-        project
-            .name
-            .if_supports_color(Stream::Stdout, |s| s.bold())
+        project.name.if_supports_color(Stream::Stdout, |s| s.bold())
     );
     println!();
     println!(
@@ -251,6 +248,59 @@ pub fn print_project_detail(project: &ProjectDetail) {
     }
 
     if let Some(desc) = &project.description {
+        if !desc.is_empty() {
+            println!();
+            println!("{}", desc);
+        }
+    }
+}
+
+pub fn print_cycles(cycles: &[Cycle]) {
+    if cycles.is_empty() {
+        println!("No cycles found.");
+        return;
+    }
+
+    let number_style = Style::new().cyan().bold();
+    for cycle in cycles {
+        let name = cycle.name.as_deref().unwrap_or("");
+        let progress = format!("{:.0}%", cycle.progress * 100.0);
+        let dates = format!("{} → {}", &cycle.starts_at[..10], &cycle.ends_at[..10]);
+        let number_str = cycle.number.to_string();
+        println!(
+            "Cycle {} {} {} {}",
+            number_str.if_supports_color(Stream::Stdout, |s| s.style(number_style)),
+            name,
+            dates.if_supports_color(Stream::Stdout, |s| s.dimmed()),
+            progress.if_supports_color(Stream::Stdout, |s| s.dimmed())
+        );
+    }
+}
+
+pub fn print_cycle_detail(cycle: &CycleDetail) {
+    let number_style = Style::new().cyan().bold();
+    let name_style = Style::new().bold();
+    let name = cycle.name.as_deref().unwrap_or("");
+    let number_str = cycle.number.to_string();
+    println!(
+        "Cycle {} {}",
+        number_str.if_supports_color(Stream::Stdout, |s| s.style(number_style)),
+        name.if_supports_color(Stream::Stdout, |s| s.style(name_style))
+    );
+    println!();
+    println!(
+        "{}: {} → {}",
+        "Period".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &cycle.starts_at[..10],
+        &cycle.ends_at[..10]
+    );
+    println!(
+        "{}: {:.0}%",
+        "Progress".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        cycle.progress * 100.0
+    );
+
+    if let Some(desc) = &cycle.description {
         if !desc.is_empty() {
             println!();
             println!("{}", desc);

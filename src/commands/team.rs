@@ -30,6 +30,7 @@ struct TeamsConnection {
 }
 
 #[derive(Deserialize, Clone)]
+#[allow(dead_code)]
 pub struct Team {
     pub id: String,
     pub key: String,

@@ -1,3 +1,4 @@
+pub mod cycle;
 pub mod issue;
 pub mod project;
 pub mod team;
@@ -26,5 +27,10 @@ pub enum Commands {
     Project {
         #[command(subcommand)]
         command: project::ProjectCommands,
+    },
+    /// Cycle operations
+    Cycle {
+        #[command(subcommand)]
+        command: cycle::CycleCommands,
     },
 }
