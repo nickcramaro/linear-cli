@@ -43,8 +43,19 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::user::handle_me(&client).await?;
             }
         },
-        Commands::Issue { command: _ } => {
-            todo!("Issue commands will be implemented in subsequent tasks")
+        Commands::Issue { command } => match command {
+            commands::issue::IssueCommands::List(args) => {
+                commands::issue::handle_list(&client, &args).await?;
+            }
+            commands::issue::IssueCommands::Get(_) => {
+                println!("issue get - not implemented yet");
+            }
+            commands::issue::IssueCommands::Create(_) => {
+                println!("issue create - not implemented yet");
+            }
+            commands::issue::IssueCommands::Update(_) => {
+                println!("issue update - not implemented yet");
+            }
         }
     }
 

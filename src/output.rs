@@ -1,4 +1,6 @@
 use owo_colors::{OwoColorize, Stream, Style};
+use tabled::{Table, Tabled};
+use crate::commands::issue::Issue;
 
 pub fn print_user(name: &str, email: &str, id: &str) {
     println!(
@@ -27,4 +29,56 @@ pub fn print_error(error: &crate::error::Error) {
         "Error".if_supports_color(Stream::Stderr, |s| s.style(error_style)),
         error
     );
+}
+
+#[derive(Tabled)]
+struct IssueRow {
+    #[tabled(rename = "ID")]
+    id: String,
+    #[tabled(rename = "Title")]
+    title: String,
+    #[tabled(rename = "State")]
+    state: String,
+    #[tabled(rename = "Assignee")]
+    assignee: String,
+    #[tabled(rename = "Priority")]
+    priority: String,
+}
+
+pub fn print_issues(issues: &[Issue]) {
+    if issues.is_empty() {
+        println!("No issues found.");
+        return;
+    }
+
+    let rows: Vec<IssueRow> = issues.iter().map(|issue| {
+        IssueRow {
+            id: issue.identifier.clone(),
+            title: truncate(&issue.title, 40),
+            state: issue.state.as_ref().map(|s| s.name.clone()).unwrap_or_else(|| "-".to_string()),
+            assignee: issue.assignee.as_ref().map(|a| a.name.clone()).unwrap_or_else(|| "-".to_string()),
+            priority: priority_label(issue.priority),
+        }
+    }).collect();
+
+    let table = Table::new(rows).to_string();
+    println!("{}", table);
+}
+
+fn truncate(s: &str, max: usize) -> String {
+    if s.len() > max {
+        format!("{}...", &s[..max-1])
+    } else {
+        s.to_string()
+    }
+}
+
+fn priority_label(p: i32) -> String {
+    match p {
+        1 => "Urgent".to_string(),
+        2 => "High".to_string(),
+        3 => "Normal".to_string(),
+        4 => "Low".to_string(),
+        _ => "-".to_string(),
+    }
 }
