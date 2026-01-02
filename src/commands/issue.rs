@@ -107,6 +107,32 @@ pub struct Assignee {
     pub name: String,
 }
 
+#[derive(Deserialize)]
+struct IssueResponse {
+    issue: IssueDetail,
+}
+
+#[derive(Deserialize)]
+pub struct IssueDetail {
+    pub identifier: String,
+    pub title: String,
+    pub description: Option<String>,
+    pub state: Option<IssueState>,
+    pub assignee: Option<Assignee>,
+    pub priority: i32,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
+    #[serde(rename = "updatedAt")]
+    pub updated_at: String,
+    pub team: Team,
+}
+
+#[derive(Deserialize)]
+pub struct Team {
+    pub key: String,
+    pub name: String,
+}
+
 const ISSUES_QUERY: &str = r#"
     query Issues($first: Int, $filter: IssueFilter) {
         issues(first: $first, filter: $filter) {
@@ -121,6 +147,22 @@ const ISSUES_QUERY: &str = r#"
     }
 "#;
 
+const ISSUE_QUERY: &str = r#"
+    query Issue($id: String!) {
+        issue(id: $id) {
+            identifier
+            title
+            description
+            state { name }
+            assignee { name }
+            priority
+            createdAt
+            updatedAt
+            team { key name }
+        }
+    }
+"#;
+
 pub async fn handle_list(client: &LinearClient, args: &ListArgs) -> Result<()> {
     let filter = build_filter(args);
     let variables = serde_json::json!({
@@ -130,6 +172,13 @@ pub async fn handle_list(client: &LinearClient, args: &ListArgs) -> Result<()> {
 
     let response: IssuesResponse = client.query(ISSUES_QUERY, variables).await?;
     output::print_issues(&response.issues.nodes);
+    Ok(())
+}
+
+pub async fn handle_get(client: &LinearClient, args: &GetArgs) -> Result<()> {
+    let variables = serde_json::json!({ "id": args.id });
+    let response: IssueResponse = client.query(ISSUE_QUERY, variables).await?;
+    output::print_issue_detail(&response.issue);
     Ok(())
 }
 

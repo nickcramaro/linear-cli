@@ -1,6 +1,6 @@
 use owo_colors::{OwoColorize, Stream, Style};
 use tabled::{Table, Tabled};
-use crate::commands::issue::Issue;
+use crate::commands::issue::{Issue, IssueDetail};
 
 pub fn print_user(name: &str, email: &str, id: &str) {
     println!(
@@ -82,5 +82,35 @@ fn priority_label(p: i32) -> String {
         3 => "Normal".to_string(),
         4 => "Low".to_string(),
         _ => "—".to_string(),
+    }
+}
+
+pub fn print_issue_detail(issue: &IssueDetail) {
+    let id_style = Style::new().cyan().bold();
+    let title_style = Style::new().bold();
+    println!("{} {}",
+        issue.identifier.if_supports_color(Stream::Stdout, |s| s.style(id_style)),
+        issue.title.if_supports_color(Stream::Stdout, |s| s.style(title_style)));
+    println!();
+
+    println!("{}: {}", "Team".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        format!("{} ({})", issue.team.name, issue.team.key));
+    println!("{}: {}", "State".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        issue.state.as_ref().map(|s| s.name.as_str()).unwrap_or("—"));
+    println!("{}: {}", "Assignee".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        issue.assignee.as_ref().map(|a| a.name.as_str()).unwrap_or("—"));
+    println!("{}: {}", "Priority".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        priority_label(issue.priority));
+    println!("{}: {}", "Created".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &issue.created_at[..10]);
+    println!("{}: {}", "Updated".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &issue.updated_at[..10]);
+
+    if let Some(desc) = &issue.description {
+        if !desc.is_empty() {
+            println!();
+            println!("{}", "Description:".if_supports_color(Stream::Stdout, |s| s.dimmed()));
+            println!("{}", desc);
+        }
     }
 }

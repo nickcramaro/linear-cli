@@ -47,8 +47,8 @@ async fn run(cli: Cli) -> error::Result<()> {
             commands::issue::IssueCommands::List(args) => {
                 commands::issue::handle_list(&client, &args).await?;
             }
-            commands::issue::IssueCommands::Get(_) => {
-                println!("issue get - not implemented yet");
+            commands::issue::IssueCommands::Get(args) => {
+                commands::issue::handle_get(&client, &args).await?;
             }
             commands::issue::IssueCommands::Create(_) => {
                 println!("issue create - not implemented yet");
