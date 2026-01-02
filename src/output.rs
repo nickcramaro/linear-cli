@@ -1,4 +1,5 @@
 use crate::commands::issue::{Issue, IssueDetail};
+use crate::commands::project::{Project, ProjectDetail};
 use crate::commands::team::Team;
 use owo_colors::{OwoColorize, Stream, Style};
 use tabled::{Table, Tabled};
@@ -189,6 +190,67 @@ pub fn print_team_detail(team: &Team) {
     );
 
     if let Some(desc) = &team.description {
+        if !desc.is_empty() {
+            println!();
+            println!("{}", desc);
+        }
+    }
+}
+
+pub fn print_projects(projects: &[Project]) {
+    if projects.is_empty() {
+        println!("No projects found.");
+        return;
+    }
+
+    for project in projects {
+        let progress = format!("{:.0}%", project.progress * 100.0);
+        println!(
+            "{} [{}] {}",
+            project
+                .name
+                .if_supports_color(Stream::Stdout, |s| s.bold()),
+            project.state,
+            progress.if_supports_color(Stream::Stdout, |s| s.dimmed())
+        );
+    }
+}
+
+pub fn print_project_detail(project: &ProjectDetail) {
+    println!(
+        "{}",
+        project
+            .name
+            .if_supports_color(Stream::Stdout, |s| s.bold())
+    );
+    println!();
+    println!(
+        "{}: {}",
+        "State".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        project.state
+    );
+    println!(
+        "{}: {:.0}%",
+        "Progress".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        project.progress * 100.0
+    );
+
+    if let Some(start) = &project.start_date {
+        println!(
+            "{}: {}",
+            "Start".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+            &start[..10]
+        );
+    }
+    if let Some(target) = &project.target_date {
+        println!(
+            "{}: {}",
+            "Target".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+            &target[..10]
+        );
+    }
+
+    if let Some(desc) = &project.description {
         if !desc.is_empty() {
             println!();
             println!("{}", desc);
