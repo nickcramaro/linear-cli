@@ -9,6 +9,7 @@ pub enum Error {
     Unauthorized,
 
     #[error("Not found: {0}")]
+    #[allow(dead_code)] // Reserved for future use
     NotFound(String),
 
     #[error("Rate limited, retry after {0} seconds")]

@@ -35,6 +35,10 @@ const VIEWER_QUERY: &str = r#"
 
 pub async fn handle_me(client: &LinearClient) -> Result<()> {
     let response: ViewerResponse = client.query(VIEWER_QUERY, serde_json::json!({})).await?;
-    output::print_user(&response.viewer.name, &response.viewer.email, &response.viewer.id);
+    output::print_user(
+        &response.viewer.name,
+        &response.viewer.email,
+        &response.viewer.id,
+    );
     Ok(())
 }
