@@ -1,3 +1,4 @@
+pub mod comment;
 pub mod cycle;
 pub mod issue;
 pub mod label;
@@ -44,5 +45,10 @@ pub enum Commands {
     Workflow {
         #[command(subcommand)]
         command: workflow::WorkflowCommands,
+    },
+    /// Comment operations
+    Comment {
+        #[command(subcommand)]
+        command: comment::CommentCommands,
     },
 }

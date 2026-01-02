@@ -1,3 +1,4 @@
+use crate::commands::comment::Comment;
 use crate::commands::cycle::{Cycle, CycleDetail};
 use crate::commands::issue::{Issue, IssueDetail};
 use crate::commands::label::Label;
@@ -350,5 +351,28 @@ pub fn print_workflow_states(states: &[WorkflowState]) {
                 println!("  {}", state.name);
             }
         }
+    }
+}
+
+pub fn print_comments(comments: &[Comment]) {
+    if comments.is_empty() {
+        println!("No comments found.");
+        return;
+    }
+
+    for comment in comments {
+        let author = comment
+            .user
+            .as_ref()
+            .map(|u| u.name.as_str())
+            .unwrap_or("Unknown");
+        let date = &comment.created_at[..10];
+        println!(
+            "{} {}",
+            author.if_supports_color(Stream::Stdout, |s| s.bold()),
+            date.if_supports_color(Stream::Stdout, |s| s.dimmed())
+        );
+        println!("{}", comment.body);
+        println!();
     }
 }

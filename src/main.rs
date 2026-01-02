@@ -94,6 +94,14 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::workflow::handle_list(&client, &args).await?;
             }
         },
+        Commands::Comment { command } => match command {
+            commands::comment::CommentCommands::List(args) => {
+                commands::comment::handle_list(&client, &args).await?;
+            }
+            commands::comment::CommentCommands::Create(args) => {
+                commands::comment::handle_create(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())
