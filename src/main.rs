@@ -53,8 +53,8 @@ async fn run(cli: Cli) -> error::Result<()> {
             commands::issue::IssueCommands::Create(args) => {
                 commands::issue::handle_create(&client, &args).await?;
             }
-            commands::issue::IssueCommands::Update(_) => {
-                println!("issue update - not implemented yet");
+            commands::issue::IssueCommands::Update(args) => {
+                commands::issue::handle_update(&client, &args).await?;
             }
         }
     }

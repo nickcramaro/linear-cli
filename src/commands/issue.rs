@@ -273,6 +273,43 @@ pub async fn handle_create(client: &LinearClient, args: &CreateArgs) -> Result<(
     Ok(())
 }
 
+pub async fn handle_update(client: &LinearClient, args: &UpdateArgs) -> Result<()> {
+    let mut input = serde_json::Map::new();
+
+    if let Some(title) = &args.title {
+        input.insert("title".to_string(), serde_json::json!(title));
+    }
+    if let Some(state) = &args.state {
+        input.insert("stateId".to_string(), serde_json::json!(state));
+    }
+    if let Some(priority) = args.priority {
+        input.insert("priority".to_string(), serde_json::json!(priority));
+    }
+
+    if input.is_empty() {
+        println!("No updates specified. Use --title, --state, or --priority.");
+        return Ok(());
+    }
+
+    let variables = serde_json::json!({
+        "id": args.id,
+        "input": input
+    });
+
+    let response: UpdateIssueResponse = client.query(UPDATE_ISSUE_MUTATION, variables).await?;
+
+    if response.issue_update.success {
+        if let Some(issue) = response.issue_update.issue {
+            let state_name = issue.state.map(|s| s.name).unwrap_or_else(|| "—".to_string());
+            println!("Updated {} - {} [{}]", issue.identifier, issue.title, state_name);
+        }
+    } else {
+        return Err(crate::error::Error::GraphQL("Failed to update issue".to_string()));
+    }
+
+    Ok(())
+}
+
 fn build_filter(args: &ListArgs) -> serde_json::Value {
     let mut filter = serde_json::Map::new();
 
