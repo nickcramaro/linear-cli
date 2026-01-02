@@ -1,4 +1,5 @@
 pub mod issue;
+pub mod team;
 pub mod user;
 
 use clap::Subcommand;
@@ -14,5 +15,10 @@ pub enum Commands {
     Issue {
         #[command(subcommand)]
         command: issue::IssueCommands,
+    },
+    /// Team operations
+    Team {
+        #[command(subcommand)]
+        command: team::TeamCommands,
     },
 }

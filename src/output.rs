@@ -1,4 +1,5 @@
 use crate::commands::issue::{Issue, IssueDetail};
+use crate::commands::team::Team;
 use owo_colors::{OwoColorize, Stream, Style};
 use tabled::{Table, Tabled};
 
@@ -154,6 +155,42 @@ pub fn print_issue_detail(issue: &IssueDetail) {
                 "{}",
                 "Description:".if_supports_color(Stream::Stdout, |s| s.dimmed())
             );
+            println!("{}", desc);
+        }
+    }
+}
+
+pub fn print_teams(teams: &[Team]) {
+    if teams.is_empty() {
+        println!("No teams found.");
+        return;
+    }
+
+    let key_style = Style::new().cyan().bold();
+    for team in teams {
+        println!(
+            "{} - {}",
+            team.key
+                .if_supports_color(Stream::Stdout, |s| s.style(key_style)),
+            team.name
+        );
+    }
+}
+
+pub fn print_team_detail(team: &Team) {
+    let key_style = Style::new().cyan().bold();
+    let name_style = Style::new().bold();
+    println!(
+        "{} {}",
+        team.key
+            .if_supports_color(Stream::Stdout, |s| s.style(key_style)),
+        team.name
+            .if_supports_color(Stream::Stdout, |s| s.style(name_style))
+    );
+
+    if let Some(desc) = &team.description {
+        if !desc.is_empty() {
+            println!();
             println!("{}", desc);
         }
     }

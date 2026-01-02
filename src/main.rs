@@ -57,6 +57,14 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::issue::handle_update(&client, &args).await?;
             }
         },
+        Commands::Team { command } => match command {
+            commands::team::TeamCommands::List => {
+                commands::team::handle_list(&client).await?;
+            }
+            commands::team::TeamCommands::Get(args) => {
+                commands::team::handle_get(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())
