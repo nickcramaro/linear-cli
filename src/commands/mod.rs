@@ -6,6 +6,7 @@ pub mod label;
 pub mod project;
 pub mod search;
 pub mod team;
+pub mod update;
 pub mod user;
 pub mod workflow;
 
@@ -60,4 +61,6 @@ pub enum Commands {
     },
     /// Search issues
     Search(search::SearchArgs),
+    /// Update to the latest version
+    Update,
 }

@@ -128,6 +128,12 @@ linear search "bug fix"           # Search issues
 linear search "login" -n 20       # With custom limit
 ```
 
+### Update
+
+```bash
+linear update                     # Update to the latest version
+```
+
 ## Options
 
 All commands support:

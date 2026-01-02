@@ -35,6 +35,11 @@ async fn main() {
 }
 
 async fn run(cli: Cli) -> error::Result<()> {
+    // Handle update command separately (doesn't need Linear API key)
+    if let Commands::Update = cli.command {
+        return commands::update::handle_update().await;
+    }
+
     let client = client::LinearClient::from_env()?;
 
     match cli.command {
@@ -116,6 +121,7 @@ async fn run(cli: Cli) -> error::Result<()> {
         Commands::Search(args) => {
             commands::search::handle_search(&client, &args).await?;
         }
+        Commands::Update => unreachable!(), // Handled above
     }
 
     Ok(())
