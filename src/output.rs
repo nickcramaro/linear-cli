@@ -1,5 +1,6 @@
 use crate::commands::comment::Comment;
 use crate::commands::cycle::{Cycle, CycleDetail};
+use crate::commands::document::{Document, DocumentDetail};
 use crate::commands::issue::{Issue, IssueDetail};
 use crate::commands::label::Label;
 use crate::commands::project::{Project, ProjectDetail};
@@ -374,5 +375,45 @@ pub fn print_comments(comments: &[Comment]) {
         );
         println!("{}", comment.body);
         println!();
+    }
+}
+
+pub fn print_documents(documents: &[Document]) {
+    if documents.is_empty() {
+        println!("No documents found.");
+        return;
+    }
+
+    for doc in documents {
+        println!(
+            "{} {}",
+            doc.title.if_supports_color(Stream::Stdout, |s| s.bold()),
+            (&doc.updated_at[..10]).if_supports_color(Stream::Stdout, |s| s.dimmed())
+        );
+    }
+}
+
+pub fn print_document_detail(doc: &DocumentDetail) {
+    println!(
+        "{}",
+        doc.title.if_supports_color(Stream::Stdout, |s| s.bold())
+    );
+    println!();
+    println!(
+        "{}: {}",
+        "Created".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &doc.created_at[..10]
+    );
+    println!(
+        "{}: {}",
+        "Updated".if_supports_color(Stream::Stdout, |s| s.dimmed()),
+        &doc.updated_at[..10]
+    );
+
+    if let Some(content) = &doc.content {
+        if !content.is_empty() {
+            println!();
+            println!("{}", content);
+        }
     }
 }

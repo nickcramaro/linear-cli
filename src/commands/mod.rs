@@ -1,5 +1,6 @@
 pub mod comment;
 pub mod cycle;
+pub mod document;
 pub mod issue;
 pub mod label;
 pub mod project;
@@ -50,5 +51,10 @@ pub enum Commands {
     Comment {
         #[command(subcommand)]
         command: comment::CommentCommands,
+    },
+    /// Document operations
+    Document {
+        #[command(subcommand)]
+        command: document::DocumentCommands,
     },
 }

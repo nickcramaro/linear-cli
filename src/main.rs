@@ -102,6 +102,17 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::comment::handle_create(&client, &args).await?;
             }
         },
+        Commands::Document { command } => match command {
+            commands::document::DocumentCommands::List(args) => {
+                commands::document::handle_list(&client, &args).await?;
+            }
+            commands::document::DocumentCommands::Get(args) => {
+                commands::document::handle_get(&client, &args).await?;
+            }
+            commands::document::DocumentCommands::Create(args) => {
+                commands::document::handle_create(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())
