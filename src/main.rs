@@ -43,6 +43,9 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::user::handle_me(&client).await?;
             }
         },
+        Commands::Issue { command: _ } => {
+            todo!("Issue commands will be implemented in subsequent tasks")
+        }
     }
 
     Ok(())
