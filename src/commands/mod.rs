@@ -4,6 +4,7 @@ pub mod label;
 pub mod project;
 pub mod team;
 pub mod user;
+pub mod workflow;
 
 use clap::Subcommand;
 
@@ -38,5 +39,10 @@ pub enum Commands {
     Label {
         #[command(subcommand)]
         command: label::LabelCommands,
+    },
+    /// Workflow operations
+    Workflow {
+        #[command(subcommand)]
+        command: workflow::WorkflowCommands,
     },
 }

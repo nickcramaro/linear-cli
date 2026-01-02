@@ -3,6 +3,7 @@ use crate::commands::issue::{Issue, IssueDetail};
 use crate::commands::label::Label;
 use crate::commands::project::{Project, ProjectDetail};
 use crate::commands::team::Team;
+use crate::commands::workflow::WorkflowState;
 use owo_colors::{OwoColorize, Stream, Style};
 use tabled::{Table, Tabled};
 
@@ -321,5 +322,33 @@ pub fn print_labels(labels: &[Label]) {
             "\u{25cf}".if_supports_color(Stream::Stdout, |s| s.style(Style::new())),
             label.name
         );
+    }
+}
+
+pub fn print_workflow_states(states: &[WorkflowState]) {
+    if states.is_empty() {
+        println!("No workflow states found.");
+        return;
+    }
+
+    // Group by state type and display
+    let type_order = ["backlog", "unstarted", "started", "completed", "canceled"];
+
+    for state_type in &type_order {
+        let matching: Vec<_> = states
+            .iter()
+            .filter(|s| s.state_type == *state_type)
+            .collect();
+        if !matching.is_empty() {
+            println!(
+                "{}:",
+                state_type
+                    .to_uppercase()
+                    .if_supports_color(Stream::Stdout, |s| s.bold())
+            );
+            for state in matching {
+                println!("  {}", state.name);
+            }
+        }
     }
 }

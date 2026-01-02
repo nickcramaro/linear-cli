@@ -89,6 +89,11 @@ async fn run(cli: Cli) -> error::Result<()> {
                 commands::label::handle_list(&client, &args).await?;
             }
         },
+        Commands::Workflow { command } => match command {
+            commands::workflow::WorkflowCommands::List(args) => {
+                commands::workflow::handle_list(&client, &args).await?;
+            }
+        },
     }
 
     Ok(())
