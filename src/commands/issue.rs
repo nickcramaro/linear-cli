@@ -163,6 +163,70 @@ const ISSUE_QUERY: &str = r#"
     }
 "#;
 
+#[derive(Deserialize)]
+struct CreateIssueResponse {
+    #[serde(rename = "issueCreate")]
+    issue_create: IssueCreatePayload,
+}
+
+#[derive(Deserialize)]
+struct IssueCreatePayload {
+    success: bool,
+    issue: Option<CreatedIssue>,
+}
+
+#[derive(Deserialize)]
+struct CreatedIssue {
+    identifier: String,
+    title: String,
+    url: String,
+}
+
+const CREATE_ISSUE_MUTATION: &str = r#"
+    mutation CreateIssue($input: IssueCreateInput!) {
+        issueCreate(input: $input) {
+            success
+            issue {
+                identifier
+                title
+                url
+            }
+        }
+    }
+"#;
+
+#[derive(Deserialize)]
+struct UpdateIssueResponse {
+    #[serde(rename = "issueUpdate")]
+    issue_update: IssueUpdatePayload,
+}
+
+#[derive(Deserialize)]
+struct IssueUpdatePayload {
+    success: bool,
+    issue: Option<UpdatedIssue>,
+}
+
+#[derive(Deserialize)]
+struct UpdatedIssue {
+    identifier: String,
+    title: String,
+    state: Option<IssueState>,
+}
+
+const UPDATE_ISSUE_MUTATION: &str = r#"
+    mutation UpdateIssue($id: String!, $input: IssueUpdateInput!) {
+        issueUpdate(id: $id, input: $input) {
+            success
+            issue {
+                identifier
+                title
+                state { name }
+            }
+        }
+    }
+"#;
+
 pub async fn handle_list(client: &LinearClient, args: &ListArgs) -> Result<()> {
     let filter = build_filter(args);
     let variables = serde_json::json!({
@@ -179,6 +243,33 @@ pub async fn handle_get(client: &LinearClient, args: &GetArgs) -> Result<()> {
     let variables = serde_json::json!({ "id": args.id });
     let response: IssueResponse = client.query(ISSUE_QUERY, variables).await?;
     output::print_issue_detail(&response.issue);
+    Ok(())
+}
+
+pub async fn handle_create(client: &LinearClient, args: &CreateArgs) -> Result<()> {
+    let mut input = serde_json::Map::new();
+    input.insert("title".to_string(), serde_json::json!(args.title));
+    input.insert("teamId".to_string(), serde_json::json!(args.team));
+
+    if let Some(desc) = &args.description {
+        input.insert("description".to_string(), serde_json::json!(desc));
+    }
+    if let Some(priority) = args.priority {
+        input.insert("priority".to_string(), serde_json::json!(priority));
+    }
+
+    let variables = serde_json::json!({ "input": input });
+    let response: CreateIssueResponse = client.query(CREATE_ISSUE_MUTATION, variables).await?;
+
+    if response.issue_create.success {
+        if let Some(issue) = response.issue_create.issue {
+            println!("Created {} - {}", issue.identifier, issue.title);
+            println!("{}", issue.url);
+        }
+    } else {
+        return Err(crate::error::Error::GraphQL("Failed to create issue".to_string()));
+    }
+
     Ok(())
 }
 
