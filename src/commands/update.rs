@@ -1,7 +1,6 @@
 use std::env;
 use std::fs;
 use std::io::Write;
-use std::os::unix::fs::PermissionsExt;
 
 use serde::Deserialize;
 
@@ -92,12 +91,16 @@ pub async fn handle_update() -> Result<()> {
         .write_all(&binary_data)
         .map_err(|e| Error::GraphQL(e.to_string()))?;
 
-    // Set executable permissions
-    let mut perms = fs::metadata(&temp_path)
-        .map_err(|e| Error::GraphQL(e.to_string()))?
-        .permissions();
-    perms.set_mode(0o755);
-    fs::set_permissions(&temp_path, perms).map_err(|e| Error::GraphQL(e.to_string()))?;
+    // Set executable permissions (Unix only)
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mut perms = fs::metadata(&temp_path)
+            .map_err(|e| Error::GraphQL(e.to_string()))?
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&temp_path, perms).map_err(|e| Error::GraphQL(e.to_string()))?;
+    }
 
     // Replace the current binary
     fs::rename(&temp_path, &current_exe).map_err(|e| Error::GraphQL(e.to_string()))?;
